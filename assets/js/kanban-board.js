@@ -59,7 +59,7 @@ const nameKey = (name) => wordsOf(name).join(' ') || String(name ?? '').trim().t
 //   { status: 'Ground 0', stage: 'backlog' }   into that stage's column
 //   { status: 'Done', collapsed: true }        its column starts collapsed (false: open)
 //   { status: 'Notes', hidden: true }          left off the board
-export function boardConfig(defaults, columns, issueMetadata = false) {
+export function boardConfig(defaults, columns, issueMetadata = false, showAuthor = false) {
   const data = defaults || {};
   const overrides = new Map();
   listOf(columns).forEach((column) => {
@@ -79,6 +79,7 @@ export function boardConfig(defaults, columns, issueMetadata = false) {
     fields: data.fields || {},
     cardFields: [...listOf(data.card_fields), ...(issueMetadata ? ['Estimate'] : [])],
     issueMetadata,
+    showAuthor,
     issues: data.issues || {},
     perColumn: Number(data.per_column) > 0 ? Number(data.per_column) : Infinity,
     text: data.text || {},
@@ -272,6 +273,8 @@ export function normalizeBoard({ project, fields, items }, { filterName = '', ur
     const people = [
       ...(valueOf(item, picked.people)?.options || []).map(optionName),
       ...(content.assignees || []).map((person) => person.login),
+      // author=true: the person who opened the issue (or made the draft), for boards that don't assign people.
+      ...(config.showAuthor ? [content.user?.login] : []),
     ].filter((name, i, all) => name && all.indexOf(name) === i);
     // A draft has no page of its own; it opens in the board's side pane. So
     // does any card whose link isn't on github.com.
@@ -735,9 +738,11 @@ function settingsOf(section, defaults = readJson(document.getElementById('ocs-ka
   if (!defaults) return null;
   const columns = readJson(section.querySelector('script[data-hook="columns"]'));
   const issueMetadata = section.dataset.issueMetadata === 'true';
+  const showAuthor = section.dataset.showAuthor === 'true';
   // Preserve existing cache keys for boards that have not opted in.
   const settings = issueMetadata ? [defaults, columns, true] : [defaults, columns];
-  return { config: boardConfig(defaults, columns, issueMetadata), stamp: fingerprint(JSON.stringify(settings)) };
+  if (showAuthor) settings.push({ author: true });
+  return { config: boardConfig(defaults, columns, issueMetadata, showAuthor), stamp: fingerprint(JSON.stringify(settings)) };
 }
 
 // One look at a board: the saved copy at once, then GitHub's when that copy is

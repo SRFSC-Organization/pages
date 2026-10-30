@@ -143,6 +143,17 @@ test('fields are found by the names in the data, in any case, and a filter the b
 
 /* ── Normalizing ─────────────────────────────────────────────────────── */
 
+test('author=true adds who opened each card after its people; off by default', yaml, () => {
+    const opened = (card, login) => ({ ...card, content: { ...card.content, user: { login } } });
+    const items = [opened(ISSUE, 'Sathwik'), opened(PULL, 'Tarun')];
+    const plain = normalizeBoard({ project: PROJECT, fields: FIELDS, items }, { url: BOARD_URL, config: OURS });
+    assert.deepEqual(plain.cards.map((c) => c.people), [['Sathwik'], ['Wick2009']]);
+    const config = boardConfig(DEFAULTS, OUR_COLUMNS, false, true);
+    const board = normalizeBoard({ project: PROJECT, fields: FIELDS, items }, { url: BOARD_URL, config });
+    // The author joins once, after the People field and assignees.
+    assert.deepEqual(board.cards.map((c) => c.people), [['Sathwik'], ['Wick2009', 'Tarun']]);
+});
+
 test('a board keeps its work cards with links, groups, people and shipped dates', yaml, () => {
     const board = normalizeBoard({ project: PROJECT, fields: FIELDS, items: ITEMS }, { filterName: 'Team', url: BOARD_URL, config: OURS });
     assert.equal(board.title, 'UGRC-CSA — Team Kanban');

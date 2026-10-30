@@ -167,7 +167,7 @@ year: "2026-2027"
 
 {% assign srfsc_data = site.data.srfsc %}
 {% if srfsc_data.Board %}
-{% include ocs_kanban_board.html url=srfsc_data.Board.url %}
+{% include ocs_kanban_board.html url=srfsc_data.Board.url author=true %}
 {% endif %}
 
 ---
