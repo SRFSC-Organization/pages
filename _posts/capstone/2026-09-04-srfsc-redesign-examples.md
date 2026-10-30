@@ -44,9 +44,6 @@ year: "2026-2027"
     <p class="comms-description">The SRFSC homepage can be more direct and action-focused. The strongest example is to make the mission, volunteer path, and urgent neighborhood context visible immediately.</p>
   </div>
 
-  <div class="comms-card">
-    {% include ocs_kanban_board.html url="https://github.com/orgs/SRFSC-Organization/projects/1" title="SRFSC Project Board" %}
-  </div>
 </div>
 
 <!-- markdownlint-disable MD033 MD010 MD012 -->
@@ -165,6 +162,15 @@ year: "2026-2027"
   </div>
 </div>
 <!-- markdownlint-enable MD033 MD010 MD012 -->
+
+## Project Kanban Board
+
+{% assign srfsc_data = site.data.srfsc %}
+{% if srfsc_data.Board %}
+{% include ocs_kanban_board.html url=srfsc_data.Board.url %}
+{% endif %}
+
+---
 
 ## Powered by OCS grids and buttons
 
