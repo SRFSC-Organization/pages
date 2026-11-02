@@ -1,0 +1,110 @@
+// SRFSC capstone: kanban board look for /capstone/srfsc/ (see
+// _posts/capstone/2026-09-04-srfsc-redesign-examples.md). Scoped to the SRFSC board
+// (the live board's SRFSC-Organization data-board-url, a static snapshot's data-srfsc-board
+// attribute or srfsc-board-heading label, or a .srfsc-kanban wrapper), so other
+// capstones' boards keep the shared look. Works for the live board
+// (_includes/ocs_kanban_board.html) and for a static ul.ocs__kanban-board snapshot.
+
+[data-board-url*="orgs/SRFSC-Organization/"],
+[data-srfsc-board],
+section[aria-labelledby="srfsc-board-heading"],
+.srfsc-kanban {
+  --srfsc-kb-backlog: #8a8f98;
+  --srfsc-kb-todo: #9aa3b2;
+  --srfsc-kb-doing: #e0a33a;
+  --srfsc-kb-review: #9b8cf7;
+  --srfsc-kb-done: #3fb37f;
+  --srfsc-kb-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --srfsc-kb-surface: color-mix(in srgb, var(--pref-text-color) 4%, var(--panel));
+  --srfsc-kb-card: color-mix(in srgb, var(--pref-text-color) 8%, var(--panel));
+  font-family: var(--srfsc-kb-font);
+
+  // The header line and filter buttons use the same plain font as the cards.
+  .ocs__text, .ocs__btn, strong { font-family: inherit; }
+  // The shared pill blue measures just under 4.5:1 on this dark panel; a lighter blue passes.
+  .ocs__btn.pill:not(.fill):not(:hover):not(:focus-visible) { color: #60a5fa !important; }
+
+  .ocs__kanban-board {
+    gap: 1rem;
+
+    // Phones: one column under another instead of a narrow sideways scroll.
+    @media (max-width: 700px) {
+      grid-auto-flow: row;
+      grid-template-columns: minmax(0, 1fr);
+      overflow-x: visible;
+    }
+  }
+
+  .ocs__kanban-column {
+    --srfsc-kb-stage: var(--srfsc-kb-backlog);
+    gap: 0.6rem;
+    padding: 0.9rem;
+    border: 0;
+    border-top: 3px solid var(--srfsc-kb-stage);
+    border-radius: 12px;
+    background: var(--srfsc-kb-surface);
+
+    &[data-stage="todo"] { --srfsc-kb-stage: var(--srfsc-kb-todo); }
+    &[data-stage="doing"] { --srfsc-kb-stage: var(--srfsc-kb-doing); }
+    &[data-stage="review"] { --srfsc-kb-stage: var(--srfsc-kb-review); }
+    &[data-stage="done"] { --srfsc-kb-stage: var(--srfsc-kb-done); }
+
+    // Column heading: a stage-colored dot, the name, and the count at the far end.
+    > div:first-child {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+
+      strong {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+
+        &::before {
+          content: "";
+          width: 0.6rem;
+          height: 0.6rem;
+          border-radius: 50%;
+          background: var(--srfsc-kb-stage);
+        }
+      }
+
+      .ocs__status-pill { margin-left: auto; }
+    }
+  }
+
+  .ocs__kanban-item {
+    gap: 0.3rem;
+    padding: 0.75rem 0.85rem;
+    border: 0;
+    border-left: 3px solid var(--srfsc-kb-stage);
+    border-radius: 8px;
+    background: var(--srfsc-kb-card);
+
+    &:hover,
+    &:focus-visible {
+      border-color: var(--srfsc-kb-stage);
+      background: color-mix(in srgb, var(--srfsc-kb-stage) 10%, var(--srfsc-kb-card));
+    }
+  }
+
+  .ocs__kanban-kicker {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .ocs__kanban-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .ocs__kanban-note {
+    font-size: 0.8rem;
+  }
+}
