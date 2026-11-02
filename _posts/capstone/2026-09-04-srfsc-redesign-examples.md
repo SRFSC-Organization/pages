@@ -165,8 +165,37 @@ year: "2026-2027"
 
 ## Project Kanban Board
 
+<div id="srfsc-project-board">
 {% assign srfsc_data = site.data.srfsc %}
 {% include ocs_kanban_board.html url=srfsc_data.Board.url title="Scripps Ranch Fire Safe Council Project Ideation" %}
+</div>
+
+<script type="module">
+  const board = document.getElementById('srfsc-project-board');
+  // These priorities match the labels assigned to our GitHub issues.
+  const priorities = {
+    1: 'Low', 2: 'High', 3: 'High', 4: 'Low', 5: 'Low',
+    6: 'Medium', 7: 'Medium', 8: 'High', 9: 'High', 10: 'High',
+    11: 'Medium', 12: 'Medium', 13: 'High', 14: 'Medium',
+  };
+
+  function addPriorities() {
+    for (const card of board.querySelectorAll('a.ocs__kanban-item')) {
+      const issue = card.getAttribute('href').match(/^https:\/\/github\.com\/SRFSC-Organization\/capstone2pages\/issues\/(\d+)(?:[?#].*)?$/);
+      const priority = issue && priorities[issue[1]];
+      if (!priority || card.querySelector('[data-srfsc-priority]')) continue;
+      const note = document.createElement('div');
+      note.className = 'ocs__kanban-note';
+      note.setAttribute('data-srfsc-priority', '');
+      note.textContent = `Priority: ${priority}`;
+      card.appendChild(note);
+    }
+  }
+
+  // The live board loads and redraws its cards after this page has rendered.
+  new MutationObserver(addPriorities).observe(board, { childList: true, subtree: true });
+  addPriorities();
+</script>
 
 ---
 
