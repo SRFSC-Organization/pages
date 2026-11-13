@@ -177,6 +177,7 @@ year: "2026-2027"
     1: 'Low', 2: 'High', 3: 'High', 4: 'Low', 5: 'Low',
     6: 'Medium', 7: 'Medium', 8: 'High', 9: 'High', 10: 'High',
     11: 'Medium', 12: 'Medium', 13: 'High', 14: 'Medium',
+    20: 'High', 21: 'High', 22: 'High', 23: 'High', 24: 'High',
   };
 
   function addPriorities() {
